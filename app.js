@@ -1,10 +1,12 @@
 const express = require("express");
 require("dotenv").config();
+const bodyParser = require("body-parser");
 const schedule = require("node-schedule");
 const cors = require("cors");
 const fetch = require("node-fetch");
 const app = express();
 app.use(cors());
+app.use(bodyParser.json());
 
 const PORT = process.env.PORT || 8080;
 const etherscanKey = process.env.ETHERSCAN_KEY;
@@ -85,8 +87,8 @@ const tableLand = async () => {
 
 let prevBlock = 15527730;
 
-app.get("/", async (req, res) => {
-  res.send("Hello World");
+app.get("/", (req, res) => {
+  res.status(200).send("Alive!");
 });
 
 app.get("/query/:table/:company/:wallet", async (req, res, next) => {
