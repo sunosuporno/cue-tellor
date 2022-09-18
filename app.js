@@ -168,6 +168,6 @@ app.use((error, req, res, next) => {
   res.status(status).json({ message: message, data: data });
 });
 
-checkingKey();
-tableLand();
+// checkingKey();
+// tableLand();
 app.listen(PORT);
