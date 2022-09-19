@@ -105,9 +105,13 @@ app.get("/query/:table/:company/:wallet", async (req, res, next) => {
     const data = await response.json();
     console.log(data);
     if (data.length === 0 || data.message == "Row not found") {
-      res.status(200).send(false);
+      res.status(200).json({
+        message: 0,
+      });
     } else if (data.length > 0) {
-      res.status(200).send(true);
+      res.status(200).json({
+        message: 1,
+      });
     }
   } catch (err) {
     console.log(err);
