@@ -96,8 +96,8 @@ app.get("/queryUser/:table/:company/:wallet", async (req, res, next) => {
   try {
     const table = req.params.table;
     const company = req.params.company;
-    const hexWallet = req.params.wallet;
-    const wallet = converter.hexToDec(hexWallet);
+    const wallet = req.params.wallet;
+
     const url = `https://testnet.tableland.network/query?mode=json&s=select%20*%20from%20${table}%20where%20company_name%20=%20%27${company}%27%20and%20wallet_address%20=%20%27${wallet}%27`;
     const options = {
       method: "GET",
@@ -143,7 +143,10 @@ app.get("/queryContract/:table/:company/:contract", async (req, res, next) => {
         message: 1,
       });
     }
-  } catch (err) {}
+  } catch (err) {
+    console.log(err);
+    next(err);
+  }
 });
 
 // const job = schedule.scheduleJob("*/1 * * * *", async function () {
