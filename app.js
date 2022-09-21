@@ -4,6 +4,7 @@ const bodyParser = require("body-parser");
 const schedule = require("node-schedule");
 const cors = require("cors");
 const fetch = require("node-fetch");
+const converter = require("hex2dec");
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
@@ -91,11 +92,12 @@ app.get("/", (req, res) => {
   res.status(200).send("Alive!");
 });
 
-app.get("/query/:table/:company/:wallet", async (req, res, next) => {
+app.get("/queryUser/:table/:company/:wallet", async (req, res, next) => {
   try {
     const table = req.params.table;
     const company = req.params.company;
-    const wallet = req.params.wallet;
+    const hexWallet = req.params.wallet;
+    const wallet = converter.hexToDec(hexWallet);
     const url = `https://testnet.tableland.network/query?mode=json&s=select%20*%20from%20${table}%20where%20company_name%20=%20%27${company}%27%20and%20wallet_address%20=%20%27${wallet}%27`;
     const options = {
       method: "GET",
@@ -117,6 +119,31 @@ app.get("/query/:table/:company/:wallet", async (req, res, next) => {
     console.log(err);
     next(err);
   }
+});
+
+app.get("/queryContract/:table/:company/:contract", async (req, res, next) => {
+  try {
+    const table = req.params.table;
+    const company = req.params.company;
+    const contract = req.params.contract;
+    const url = `https://testnet.tableland.network/query?mode=json&s=select%20*%20from%20${table}%20where%20company_name%20=%20%27${company}%27%20and%20contract_address%20=%20%27${contract}%27`;
+    const options = {
+      method: "GET",
+    };
+    console.log(url);
+    const response = await fetch(url, options);
+    const data = await response.json();
+    console.log(data);
+    if (data.length === 0 || data.message == "Row not found") {
+      res.status(200).json({
+        message: 0,
+      });
+    } else if (data.length > 0) {
+      res.status(200).json({
+        message: 1,
+      });
+    }
+  } catch (err) {}
 });
 
 // const job = schedule.scheduleJob("*/1 * * * *", async function () {
